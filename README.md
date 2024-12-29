@@ -55,7 +55,7 @@ unset($_SESSION['oauth_pkce']);
 
 try {
 	$token = $oauth->getAccessToken('authorization_code', [
-		'code' => $_GET,
+		'code' => $_GET['code'],
 	]);
 } catch (\League\OAuth2\Client\Provider\Exception\IdentityProviderException $e) {
 	// TODO: Consider logging the exception.

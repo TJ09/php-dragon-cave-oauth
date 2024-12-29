@@ -1,0 +1,8 @@
+*~
+*.orig
+*.phpx
+*.swp
+error_log
+.php-cs-fixer.cache
+.phpunit.result.cache
+vendor/

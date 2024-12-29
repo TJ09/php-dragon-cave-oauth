@@ -1,10 +1,10 @@
 <?php
 
-use Technoized\TestUtil\MockFunctions;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Technoized\TestUtil\MockFunctions;
 
-class DragonCaveOAuthTest extends \Technoized\TestUtil\BaseTestCase {
+class DragonCaveOAuthTest extends \PHPUnit\Framework\TestCase {
 	protected function setUp(): void {
 		MockFunctions::mockImplementation(\League\OAuth2\Client\Provider\AbstractProvider::class.'::getResponse', function(RequestInterface $request): ResponseInterface {
 			$uri = $request->getUri();
@@ -17,22 +17,26 @@ class DragonCaveOAuthTest extends \Technoized\TestUtil\BaseTestCase {
 						headers: [
 							'Content-Type' => 'application/json',
 						],
-						body: '{"access_token":"test_access_token","token_type":"Bearer"}'
+						body: '{"access_token":"test_access_token","token_type":"Bearer"}',
 					);
-				case '/api/v2/me';
-					return new \GuzzleHttp\Psr7\Response(
-						status: 200,
-						headers: [
-							'Content-Type' => 'application/json',
-						],
-						body: '{"errors":[],"data":{"user_id":1234,"username":"test"}}'
-					);
+				case '/api/v2/me':
+				return new \GuzzleHttp\Psr7\Response(
+					status: 200,
+					headers: [
+						'Content-Type' => 'application/json',
+					],
+					body: '{"errors":[],"data":{"user_id":1234,"username":"test"}}',
+				);
 				default:
 					throw new \Exception('Unknown request to '.$uri);
 			}
 		});
-
 	}
+
+	protected function tearDown(): void {
+		MockFunctions::resetAllMocks();
+	}
+
 	private static function getProvider(): \DragonCave\API\OAuth\DragonCaveOAuthProvider {
 		return new \DragonCave\API\OAuth\DragonCaveOAuthProvider([
 			'clientId' => 'test_client_id',

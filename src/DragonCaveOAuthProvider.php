@@ -64,6 +64,20 @@ class DragonCaveOAuthProvider extends AbstractProvider {
 
 			throw new IdentityProviderException($error, $response->getStatusCode(), $data);
 		}
+
+		// Handle DC error format.
+		if (isset($data['errors'])) {
+			/** @var array<array{0: int, 1: string}> */
+			$errors = array_filter(
+				$data['errors'],
+				/** @param array{0: int, 1: string} $error */
+				fn($error) => $error[0] !== 0,
+			);
+			if ($errors) {
+				throw new IdentityProviderException($errors[0][1], $response->getStatusCode(), $data);
+
+			}
+		}
 	}
 
 	protected function createResourceOwner(array $response, AccessToken $token): DragonCaveResourceOwner {
